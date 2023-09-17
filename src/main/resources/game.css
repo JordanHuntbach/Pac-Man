@@ -1,0 +1,40 @@
+.score {
+    -fx-alignment: top-left;
+    -fx-background-color: black;
+}
+
+.score-label {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: white;
+    -fx-font-size: 24;
+}
+
+.score-value {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: white;
+    -fx-font-size: 24;
+}
+
+.high-score {
+    -fx-alignment: top-right;
+    -fx-background-color: black;
+}
+
+.high-score-label {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: white;
+    -fx-font-size: 24;
+}
+
+.high-score-value {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: white;
+    -fx-font-size: 24;
+}
+
+.ready-text {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: yellow;
+    -fx-font-size: 24;
+    -fx-text-alignment: center;
+}
