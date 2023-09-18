@@ -5,7 +5,6 @@ import com.jordan.pacman.Globals.TILE_SIZE
 import com.jordan.pacman.game.Direction
 import com.jordan.pacman.game.Game
 import com.jordan.pacman.game.Level
-import com.jordan.pacman.game.Levels
 import com.jordan.pacman.game.Position
 import com.jordan.pacman.game.ghosts.Blinky.State.CRUISE_ELROY
 import com.jordan.pacman.game.ghosts.Blinky.State.CRUISE_ELROY_2
@@ -26,24 +25,21 @@ class Blinky : Ghost() {
     override val leftImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyLeft.png")
     override val rightImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyRight.png")
 
-    override var isScared = false
-    override var isEyes = false
     override var isInGhostHouse = false
 
     override val dotLimit = 0
-
-    override var normalSpeed = Levels[0].ghostNormalSpeed
 
     var state = NORMAL
 
     override fun reset(level: Level) {
         super.reset(level)
-        normalSpeed = level.ghostNormalSpeed
-        position = startingPosition
+
         currentDirection = Direction.LEFT
         nextDirection = Direction.LEFT
         directionFromNextTile = Direction.LEFT
+
         isInGhostHouse = false
+
         state = NORMAL
     }
 

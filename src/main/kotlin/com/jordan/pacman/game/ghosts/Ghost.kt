@@ -28,8 +28,8 @@ abstract class Ghost {
     abstract val leftImage: Image
     abstract val rightImage: Image
 
-    abstract var isScared: Boolean
-    abstract var isEyes: Boolean
+    var isScared = false
+    var isEyes = false
     abstract var isInGhostHouse: Boolean
 
     var isEnteringGhostHouse = false
@@ -46,7 +46,7 @@ abstract class Ghost {
 
     private var tunnelSpeed = Levels[0].ghostTunnelSpeed
     private var scaredSpeed = Levels[0].ghostScaredSpeed
-    abstract var normalSpeed: IntArray
+    protected var normalSpeed = Levels[0].ghostNormalSpeed
 
     private var speedTicks = 0
     private var speed = Levels[0].ghostNormalSpeed
@@ -83,26 +83,38 @@ abstract class Ghost {
     }
 
     open fun reset(level: Level) {
+        position = startingPosition
+
+        isScared = false
+        isEyes = false
+
+        isEnteringGhostHouse = false
+        isLeavingGhostHouse = false
+
+        scaredTickCount = 0
         scaredTickLimit = level.scaredLimit
         scaredFlashes = level.scaredFlashes
+
+        dotCounter = 0
+
+        manualFramePauses = 90
 
         tunnelSpeed = level.ghostTunnelSpeed
         scaredSpeed = level.ghostScaredSpeed
         normalSpeed = level.ghostNormalSpeed
 
-        isScared = false
+        speedTicks = 0
         speed = normalSpeed
-        isEyes = false
-        isEnteringGhostHouse = false
-        isLeavingGhostHouse = false
-        scaredTickCount = 0
-        manualFramePauses = 90
+
+        shouldReverse = false
+        switchedModesWhileInGhostHouse = false
+
         hasBeenReleased = false
     }
 
     fun eaten() {
-        isEyes = true
         isScared = false
+        isEyes = true
         speed = normalSpeed
     }
 
@@ -302,7 +314,7 @@ abstract class Ghost {
             position = position.copy(x = 0.0)
         }
     }
-    
+
     private fun inTunnel(maze: Maze): Boolean {
         val currentTile = maze.tileAt(position)
         return currentTile is EmptyTile && currentTile.isTunnel

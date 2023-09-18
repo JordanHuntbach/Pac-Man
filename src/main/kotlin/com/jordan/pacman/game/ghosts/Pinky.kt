@@ -23,21 +23,17 @@ class Pinky : Ghost() {
     override val leftImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/pinky/pinkyLeft.png")
     override val rightImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/pinky/pinkyRight.png")
 
-    override var isScared = false
-    override var isEyes = false
     override var isInGhostHouse = true
 
     override val dotLimit = 0
 
-    override var normalSpeed = Levels[0].ghostNormalSpeed
-
     override fun reset(level: Level) {
         super.reset(level)
-        normalSpeed = level.ghostNormalSpeed
-        position = startingPosition
+
         currentDirection = Direction.DOWN
         nextDirection = Direction.LEFT
         directionFromNextTile = Direction.LEFT
+
         isInGhostHouse = true
     }
 

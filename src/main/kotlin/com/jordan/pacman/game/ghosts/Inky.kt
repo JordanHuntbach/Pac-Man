@@ -23,23 +23,20 @@ class Inky : Ghost() {
     override val leftImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyLeft.png")
     override val rightImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyRight.png")
 
-    override var isScared = false
-    override var isEyes = false
     override var isInGhostHouse = true
 
     override var dotLimit = Levels[0].inkyDotLimit
 
-    override var normalSpeed = Levels[0].ghostNormalSpeed
-
     override fun reset(level: Level) {
         super.reset(level)
-        dotLimit = level.inkyDotLimit
-        normalSpeed = level.ghostNormalSpeed
-        position = startingPosition
+
         currentDirection = Direction.UP
         nextDirection = Direction.LEFT
         directionFromNextTile = Direction.LEFT
+
         isInGhostHouse = true
+
+        dotLimit = level.inkyDotLimit
     }
 
     /**
