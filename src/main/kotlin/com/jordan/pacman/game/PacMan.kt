@@ -28,8 +28,7 @@ class PacMan {
     private var speed = normalSpeed
 
     private fun tick() {
-        mouthOpenTicks++
-        if (mouthOpenTicks == 7) {
+        if (++mouthOpenTicks == 7) {
             mouthOpenTicks = 0
             mouthOpen = !mouthOpen
         }
@@ -55,16 +54,23 @@ class PacMan {
     }
 
     fun reset(level: Level) {
+        position = startingPosition
+
+        currentDirection = null
+        nextDirection = null
+
+        mouthOpen = true
+        mouthOpenTicks = 0
+
+        isFrightening = false
+        frighteningTicks = 0
+
+        manualFramePauses = 90
+
         normalSpeed = level.pacmanNormalSpeed
         frighteningSpeed = level.pacmanFrighteningSpeed
 
-        position = startingPosition
-        currentDirection = null
-        nextDirection = null
-        mouthOpen = true
-        mouthOpenTicks = 0
-        manualFramePauses = 90
-        isFrightening = false
+        speedTicks = 0
         speed = normalSpeed
     }
 
