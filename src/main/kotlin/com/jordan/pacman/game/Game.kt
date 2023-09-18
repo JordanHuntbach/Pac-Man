@@ -43,7 +43,7 @@ class Game(
 
     val fruit = Fruit()
 
-    private var ghostsEaten = 0
+    private var ghostsEatenWithOneEnergizer = 0
 
     private var ghostMode = 0
     private var ghostModeTickCount = 0
@@ -94,7 +94,7 @@ class Game(
 
         if (atePill && maze.allDotsEaten()) {
             logger.info { "Level $levelCounter complete" }
-            currentLevel = Levels[levelCounter++]
+            currentLevel = Levels[++levelCounter]
             resetLevel()
         }
 
@@ -200,7 +200,7 @@ class Game(
 
     private fun eatPowerPill(currentTile: Tile): Boolean {
         return if (currentTile is PowerPill && currentTile.isActive) {
-            ghostsEaten = 0
+            ghostsEatenWithOneEnergizer = 0
             currentTile.isActive = false
             score += 50
             pacman.manualFramePauses = 3
@@ -223,7 +223,7 @@ class Game(
             }
 
             if (ghost.isScared) {
-                val reward = 200 * 2.0.pow(ghostsEaten++).toInt()
+                val reward = 200 * 2.0.pow(ghostsEatenWithOneEnergizer++).toInt()
                 logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
                 score += reward
                 ghost.eaten()
@@ -249,19 +249,25 @@ class Game(
     }
 
     private fun resetLevel() {
+        maze.reset()
+
         pacman.reset(currentLevel)
+
         ghosts.forEach {
             it.reset(currentLevel)
             it.dotCounter = 0
         }
-        maze.reset()
+
         fruit.reset(currentLevel)
+
         ghostMode = 0
         ghostModeTickCount = 0
         ghostModeTicks = currentLevel.scatterAndChaseTimes
+
         livesLostThisLevel = 0
         globalDotCounter = 0
         dotTimer = 0
+        dotTimerLimit = currentLevel.dotTimerLimit
     }
 
     private suspend fun render() {
