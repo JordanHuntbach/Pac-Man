@@ -27,7 +27,9 @@ class Maze {
     private val BL = fun(position: Position) = Wall(position, Wall.cornerBottomLeft)
     private val DR = fun(position: Position) = Wall(position, Wall.door)
 
-    // 28 x 31
+    val widthTiles = 28
+    val heightTiles = 31
+
     private val data = arrayOf(
         arrayOf(BR,HB,HB,HB,HB,HB,HB,HB,HB,HB,HB,HB,HB,BL,BR,HB,HB,HB,HB,HB,HB,HB,HB,HB,HB,HB,HB,BL),
         arrayOf(VR,PI,PI,PI,PI,PI,PI,PI,PI,PI,PI,PI,PI,VR,VL,PI,PI,PI,PI,PI,PI,PI,PI,PI,PI,PI,PI,VL),

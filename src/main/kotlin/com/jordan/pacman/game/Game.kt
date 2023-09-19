@@ -43,6 +43,8 @@ class Game(
 
     val fruit = Fruit()
 
+    val bonusPoints = BonusPoints()
+
     private var ghostsEatenWithOneEnergizer = 0
 
     private var ghostMode = 0
@@ -92,10 +94,15 @@ class Game(
 
         val atePill = eatPill(currentTile) || eatPowerPill(currentTile)
 
-        if (atePill && maze.allDotsEaten()) {
-            logger.info { "Level $levelCounter complete" }
-            currentLevel = Levels[++levelCounter]
-            resetLevel()
+        if (atePill) {
+            if (maze.dotsEaten() == 70 || maze.dotsEaten() == 170) {
+                fruit.spawn()
+            }
+            if (maze.allDotsEaten()) {
+                logger.info { "Level $levelCounter complete" }
+                currentLevel = Levels[++levelCounter]
+                resetLevel()
+            }
         }
 
         releaseGhosts(atePill)
@@ -109,6 +116,8 @@ class Game(
         handleCruiseElroy()
 
         handleFruit()
+
+        handleBonusPoints()
     }
 
     private fun handleFruit() {
@@ -121,11 +130,14 @@ class Game(
                 val reward = currentLevel.fruitReward
                 logger.debug { "Fruit eaten for $reward points" }
                 score += reward
+                bonusPoints.reward(fruit.position, reward)
             }
-        } else {
-            if (maze.dotsEaten() == 70 || maze.dotsEaten() == 170) {
-                fruit.spawn()
-            }
+        }
+    }
+
+    private fun handleBonusPoints() {
+        if (bonusPoints.ticks > 0) {
+            bonusPoints.ticks--
         }
     }
 
@@ -227,6 +239,7 @@ class Game(
                 logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
                 score += reward
                 ghost.eaten()
+                bonusPoints.reward(ghost.position, reward)
             } else if (!ghost.isEyes) {
                 logger.debug { "Pac-Man eaten by ${ghost.javaClass.simpleName}" }
                 pacman.reset(currentLevel)
@@ -241,7 +254,7 @@ class Game(
 
     private fun handleGhostMode() {
         if (ghostModeTickCount++ > ghostModeTicks[ghostMode]) {
-            logger.debug { "Switching ghost mode to ${if (scatterMode()) "scatter" else "chase" }" }
+            logger.debug { "Switching ghost mode to ${if (scatterMode()) "scatter" else "chase"}" }
             ghostModeTickCount = 0
             ghostMode++
             ghosts.forEach { it.switchedGhostMode() }
@@ -259,6 +272,8 @@ class Game(
         }
 
         fruit.reset(currentLevel)
+
+        bonusPoints.ticks = 0
 
         ghostMode = 0
         ghostModeTickCount = 0

@@ -38,3 +38,10 @@
     -fx-font-size: 24;
     -fx-text-alignment: center;
 }
+
+.bonus-points-text {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: cyan;
+    -fx-font-size: 18;
+    -fx-text-alignment: center;
+}

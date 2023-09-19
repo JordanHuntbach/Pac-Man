@@ -9,11 +9,8 @@ import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
@@ -22,7 +19,6 @@ import javafx.scene.text.Text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.withContext
-import mu.KLogging
 
 class GameScene : SceneProvider {
 
@@ -52,12 +48,16 @@ class GameScene : SceneProvider {
         translateY = 12.0
     }
 
+    private val bonusPointsText = Text("200").apply {
+        styleClass.add("bonus-points-text")
+    }
+
     private val canvas = Canvas(28.0 * TILE_SIZE, 34.0 * TILE_SIZE)
     private val graphicsContext = canvas.getGraphicsContext2D()
 
     private val root = BorderPane().apply {
         top = HBox(scoreNode, highScoreNode)
-        center = StackPane(canvas, readyText)
+        center = StackPane(canvas, readyText, bonusPointsText)
     }
 
     override val scene = Scene(root, 28.0 * TILE_SIZE, 35.0 * TILE_SIZE, Color.BLACK).apply {
@@ -115,6 +115,21 @@ class GameScene : SceneProvider {
             readyText.text = "READY!"
         } else {
             readyText.text = ""
+        }
+
+        if (game.bonusPoints.isActive()) {
+            bonusPointsText.text = game.bonusPoints.points.toString()
+
+            val width = game.maze.widthTiles * TILE_SIZE
+            val height = game.maze.heightTiles * TILE_SIZE
+
+            val xCenter = width / 2
+            val yCenter = height / 2
+
+            bonusPointsText.translateX = game.bonusPoints.position.x - xCenter
+            bonusPointsText.translateY = game.bonusPoints.position.y - yCenter - 1.5 * TILE_SIZE
+        } else {
+            bonusPointsText.text = ""
         }
     }
 
