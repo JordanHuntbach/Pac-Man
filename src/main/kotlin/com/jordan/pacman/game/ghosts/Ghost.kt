@@ -42,7 +42,7 @@ abstract class Ghost {
     var dotCounter = 0
     abstract val dotLimit: Int
 
-    private var manualFramePauses = 0
+    var manualFramePauses = 0
 
     private var tunnelSpeed = Levels[0].ghostTunnelSpeed
     private var scaredSpeed = Levels[0].ghostScaredSpeed
@@ -147,7 +147,9 @@ abstract class Ghost {
             isEnteringGhostHouse = true
         }
 
-        if (isScared) {
+        val paused = isPaused()
+
+        if (isScared && !paused) {
             if (scaredTickCount++ == scaredTickLimit) {
                 isScared = false
                 if (!inTunnel(game.maze)) {
@@ -156,7 +158,7 @@ abstract class Ghost {
             }
         }
 
-        if (!isPaused()) {
+        if (!paused || isEyes) {
             if (speedTicks >= speed.size) {
                 speedTicks = 0
             }

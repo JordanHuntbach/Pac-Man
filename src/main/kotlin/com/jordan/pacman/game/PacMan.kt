@@ -75,6 +75,10 @@ class PacMan {
     }
 
     fun update(level: Level, maze: Maze) {
+        if (isPaused()) {
+            return
+        }
+
         if (isFrightening) {
             if (frighteningTicks++ == level.scaredLimit) {
                 isFrightening = false
@@ -87,14 +91,12 @@ class PacMan {
             nextDirection = null
         }
 
-        if (!isPaused()) {
-            if (speedTicks >= speed.size) {
-                speedTicks = 0
-            }
-            for (i in 0..<speed[speedTicks++]) {
-                move(maze)
-                teleportIfAtEndOfTunnel()
-            }
+        if (speedTicks >= speed.size) {
+            speedTicks = 0
+        }
+        for (i in 0..<speed[speedTicks++]) {
+            move(maze)
+            teleportIfAtEndOfTunnel()
         }
     }
 

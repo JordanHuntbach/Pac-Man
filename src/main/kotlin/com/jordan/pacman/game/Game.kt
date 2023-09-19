@@ -247,6 +247,8 @@ class Game(
         score += reward
         bonusPoints.reward(ghost.position, reward)
         ghost.eaten()
+        pacman.manualFramePauses = 60
+        ghosts.forEach { it.manualFramePauses = 60 }
     }
 
     private fun eatenBy(ghost: Ghost) {
