@@ -111,7 +111,7 @@ class GameScene : SceneProvider {
             graphicsContext.drawImage(fruit, (25 - (2 * i)) * TILE_SIZE.toDouble(), 31.0 * TILE_SIZE)
         }
 
-        if (game.paused) {
+        if (game.preGame) {
             readyText.text = "READY!"
         } else {
             readyText.text = ""

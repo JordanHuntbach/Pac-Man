@@ -2,6 +2,7 @@ package com.jordan.pacman.game
 
 import com.jordan.pacman.game.ghosts.Blinky
 import com.jordan.pacman.game.ghosts.Clyde
+import com.jordan.pacman.game.ghosts.Ghost
 import com.jordan.pacman.game.ghosts.Inky
 import com.jordan.pacman.game.ghosts.Pinky
 import com.jordan.pacman.game.tiles.Pill
@@ -23,8 +24,8 @@ class Game(
     override val coroutineContext: CoroutineContext
 ) : CoroutineScope {
 
-    var paused = true
-    private var pausedFrameCounter = 120
+    var preGame = true
+    private var preGameFrameCounter = 120
 
     var score = 0
     var lives = 3
@@ -62,10 +63,10 @@ class Game(
 
             while (lives > 0) {
                 targeting(millisPerFrame = 16) {
-                    if (pausedFrameCounter >= 0) {
-                        pausedFrameCounter--
+                    if (preGameFrameCounter >= 0) {
+                        preGameFrameCounter--
                     } else {
-                        paused = false
+                        preGame = false
                         gameLoop()
                     }
                     render()
@@ -229,27 +230,32 @@ class Game(
     private fun handleGhostCollisions() {
         val pacmanTile = maze.tileAt(pacman.position)
         for (ghost in ghosts) {
-            val ghostTile = maze.tileAt(ghost.position)
-            if (pacmanTile != ghostTile) {
-                continue
-            }
-
-            if (ghost.isScared) {
-                val reward = 200 * 2.0.pow(ghostsEatenWithOneEnergizer++).toInt()
-                logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
-                score += reward
-                ghost.eaten()
-                bonusPoints.reward(ghost.position, reward)
-            } else if (!ghost.isEyes) {
-                logger.debug { "Pac-Man eaten by ${ghost.javaClass.simpleName}" }
-                pacman.reset(currentLevel)
-                ghosts.forEach { it.reset(currentLevel) }
-                lives--
-                livesLostThisLevel++
-                globalDotCounter = 0
-                break
+            if (pacmanTile == maze.tileAt(ghost.position)) {
+                if (ghost.isScared) {
+                    eat(ghost)
+                } else if (!ghost.isEyes) {
+                    eatenBy(ghost)
+                    break
+                }
             }
         }
+    }
+
+    private fun eat(ghost: Ghost) {
+        val reward = 200 * 2.0.pow(ghostsEatenWithOneEnergizer++).toInt()
+        logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
+        score += reward
+        bonusPoints.reward(ghost.position, reward)
+        ghost.eaten()
+    }
+
+    private fun eatenBy(ghost: Ghost) {
+        logger.debug { "Pac-Man eaten by ${ghost.javaClass.simpleName}" }
+        pacman.reset(currentLevel)
+        ghosts.forEach { it.reset(currentLevel) }
+        lives--
+        livesLostThisLevel++
+        globalDotCounter = 0
     }
 
     private fun handleGhostMode() {
