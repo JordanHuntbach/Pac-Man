@@ -139,17 +139,11 @@ abstract class Ghost {
      * and decide where to go from there.
      */
     fun update(game: Game) {
-        if (isInGhostHouse) {
+        if (isPaused() && !isEyes) {
             return
         }
 
-        if (isEyes && position == Position(14.0 * TILE_SIZE, 11.5 * TILE_SIZE)) {
-            isEnteringGhostHouse = true
-        }
-
-        val paused = isPaused()
-
-        if (isScared && !paused) {
+        if (isScared) {
             if (scaredTickCount++ == scaredTickLimit) {
                 isScared = false
                 if (!inTunnel(game.maze)) {
@@ -158,11 +152,15 @@ abstract class Ghost {
             }
         }
 
-        if (!paused || isEyes) {
+        if (!isInGhostHouse) {
             if (speedTicks >= speed.size) {
                 speedTicks = 0
             }
             for (i in 0..<speed[speedTicks++]) {
+                if (isEyes && position == Position(14.0 * TILE_SIZE, 11.5 * TILE_SIZE)) {
+                    isEnteringGhostHouse = true
+                }
+
                 if (isLeavingGhostHouse) {
                     moveToLeaveGhostHouse()
                 } else if (isEnteringGhostHouse) {

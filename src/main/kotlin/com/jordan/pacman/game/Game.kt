@@ -218,7 +218,7 @@ class Game(
             score += 50
             pacman.manualFramePauses = 3
             pacman.energize()
-            ghosts.forEach { if (!it.isInGhostHouse && !it.isEnteringGhostHouse) it.scare(maze) }
+            ghosts.forEach { if (!it.isEyes) it.scare(maze) }
             globalDotCounter++
             dotTimer = 0
             true
