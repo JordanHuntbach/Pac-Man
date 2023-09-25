@@ -139,7 +139,7 @@ abstract class Ghost {
      * and decide where to go from there.
      */
     fun update(game: Game) {
-        if (isPaused() && !isEyes) {
+        if (isPaused()) {
             return
         }
 

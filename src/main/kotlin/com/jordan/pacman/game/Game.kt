@@ -246,9 +246,9 @@ class Game(
         logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
         score += reward
         bonusPoints.reward(ghost.position, reward)
-        ghost.eaten()
         pacman.manualFramePauses = 60
-        ghosts.forEach { it.manualFramePauses = 60 }
+        ghosts.forEach { if (!it.isEyes) it.manualFramePauses = 60 }
+        ghost.eaten()
     }
 
     private fun eatenBy(ghost: Ghost) {
