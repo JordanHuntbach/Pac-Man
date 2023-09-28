@@ -8,6 +8,7 @@ package com.jordan.pacman.game
  * At 100% speed, the entity will move once every frame.
  * At 105% speed, the entity will move twice every 1 in 20 frames.
  * The skip frames are distributed throughout the cycle for smoother movement.
+ * The sum of frames divided by the number of entries should equal the speed percent.
  */
 object Speeds {
     val `40` = intArrayOf(1, 0, 1, 0, 0)
@@ -22,4 +23,5 @@ object Speeds {
     val `95` = intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     val `100` = intArrayOf(1)
     val `105` = intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2)
+    val `150` = intArrayOf(1, 2)
 }

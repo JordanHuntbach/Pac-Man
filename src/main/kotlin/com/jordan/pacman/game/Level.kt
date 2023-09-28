@@ -8,6 +8,8 @@ data class Level(
     val ghostTunnelSpeed: IntArray,
     val ghostScaredSpeed: IntArray,
     val ghostNormalSpeed: IntArray,
+    val ghostEyesSpeed: IntArray,
+    val ghostHouseSpeed: IntArray,
     val scatterAndChaseTimes: IntArray,
     val scaredLimit: Int,
     val scaredFlashes: Int,

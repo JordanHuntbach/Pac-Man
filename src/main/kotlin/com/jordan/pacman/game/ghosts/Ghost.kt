@@ -44,12 +44,13 @@ abstract class Ghost {
 
     var manualFramePauses = 0
 
+    protected var normalSpeed = Levels[0].ghostNormalSpeed
     private var tunnelSpeed = Levels[0].ghostTunnelSpeed
     private var scaredSpeed = Levels[0].ghostScaredSpeed
-    protected var normalSpeed = Levels[0].ghostNormalSpeed
+    private var eyesSpeed = Levels[0].ghostEyesSpeed
+    private var houseSpeed = Levels[0].ghostHouseSpeed
 
     private var speedTicks = 0
-    private var speed = Levels[0].ghostNormalSpeed
 
     private var shouldReverse = false
     private var switchedModesWhileInGhostHouse = false
@@ -99,12 +100,13 @@ abstract class Ghost {
 
         manualFramePauses = 90
 
+        normalSpeed = level.ghostNormalSpeed
         tunnelSpeed = level.ghostTunnelSpeed
         scaredSpeed = level.ghostScaredSpeed
-        normalSpeed = level.ghostNormalSpeed
+        eyesSpeed = level.ghostEyesSpeed
+        houseSpeed = level.ghostHouseSpeed
 
         speedTicks = 0
-        speed = normalSpeed
 
         shouldReverse = false
         switchedModesWhileInGhostHouse = false
@@ -115,16 +117,12 @@ abstract class Ghost {
     fun eaten() {
         isScared = false
         isEyes = true
-        speed = normalSpeed
     }
 
-    fun scare(maze: Maze) {
+    fun scare() {
         isScared = true
         scaredTickCount = 0
         shouldReverse = true
-        if (!inTunnel(maze)) {
-            speed = scaredSpeed
-        }
     }
 
     abstract fun getTarget(game: Game): Position
@@ -146,13 +144,17 @@ abstract class Ghost {
         if (isScared) {
             if (scaredTickCount++ == scaredTickLimit) {
                 isScared = false
-                if (!inTunnel(game.maze)) {
-                    speed = normalSpeed
-                }
             }
         }
 
         if (!isInGhostHouse) {
+            val speed = when {
+                isEyes -> eyesSpeed
+                inTunnel(game.maze) -> tunnelSpeed
+                isScared -> scaredSpeed
+                isLeavingGhostHouse -> houseSpeed
+                else -> normalSpeed
+            }
             if (speedTicks >= speed.size) {
                 speedTicks = 0
             }
@@ -252,18 +254,6 @@ abstract class Ghost {
         // Entering a new tile
         val previousTile = game.maze.tileAt(position)
         move(currentDirection)
-
-        if (inTunnel(game.maze)) {
-            if (!isEyes) {
-                speed = tunnelSpeed
-            }
-        } else {
-            speed = if (isScared) {
-                scaredSpeed
-            } else {
-                normalSpeed
-            }
-        }
 
         if (shouldReverse) {
             directionFromNextTile = pickNextDirection(game, previousTile, currentDirection)

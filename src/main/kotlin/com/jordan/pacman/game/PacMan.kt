@@ -25,7 +25,6 @@ class PacMan {
     private var frighteningSpeed = Levels[0].pacmanFrighteningSpeed
 
     private var speedTicks = 0
-    private var speed = normalSpeed
 
     private fun tick() {
         if (++mouthOpenTicks == 7) {
@@ -50,7 +49,6 @@ class PacMan {
 
     fun energize() {
         isFrightening = true
-        speed = frighteningSpeed
     }
 
     fun reset(level: Level) {
@@ -71,7 +69,6 @@ class PacMan {
         frighteningSpeed = level.pacmanFrighteningSpeed
 
         speedTicks = 0
-        speed = normalSpeed
     }
 
     fun update(level: Level, maze: Maze) {
@@ -82,7 +79,6 @@ class PacMan {
         if (isFrightening) {
             if (frighteningTicks++ == level.scaredLimit) {
                 isFrightening = false
-                speed = normalSpeed
             }
         }
 
@@ -91,6 +87,7 @@ class PacMan {
             nextDirection = null
         }
 
+        val speed = if (isFrightening) frighteningSpeed else normalSpeed
         if (speedTicks >= speed.size) {
             speedTicks = 0
         }
