@@ -1,0 +1,28 @@
+.root {
+    -fx-background: rgb(0, 0, 0);
+}
+
+.title {
+    -fx-fill: white;
+    -fx-font-family: "Press Start 2P";
+    -fx-font-size: 42;
+}
+
+.button {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-font-family: "PacFont";
+}
+
+.score {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: white;
+    -fx-font-size: 18;
+}
+
+.high-score {
+    -fx-font-family: "Press Start 2P";
+    -fx-fill: white;
+    -fx-font-size: 18;
+}

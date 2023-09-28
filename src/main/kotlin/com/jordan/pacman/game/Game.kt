@@ -8,7 +8,9 @@ import com.jordan.pacman.game.ghosts.Pinky
 import com.jordan.pacman.game.tiles.Pill
 import com.jordan.pacman.game.tiles.PowerPill
 import com.jordan.pacman.game.tiles.Tile
+import com.jordan.pacman.ui.GameOverScene
 import com.jordan.pacman.ui.GameScene
+import javafx.stage.Stage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,9 +22,12 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 
 class Game(
-    private val gameScene: GameScene?,
+    stage: Stage?,
     override val coroutineContext: CoroutineContext
 ) : CoroutineScope {
+
+    private val gameScene = stage?.let { GameScene(it) }
+    private val gameOverScene = stage?.let { GameOverScene(it) }
 
     var preGame = true
     private var preGameFrameCounter = 120
@@ -59,7 +64,10 @@ class Game(
 
     fun start() {
         launch(newSingleThreadContext("Game Thread")) {
-            gameScene?.registerDirectionCallback { pacman.nextDirection = it }
+            gameScene?.apply {
+                setStageScene()
+                registerDirectionCallback { pacman.nextDirection = it }
+            }
 
             while (lives > 0) {
                 targeting(millisPerFrame = 16) {
@@ -73,7 +81,7 @@ class Game(
                 }
             }
 
-            logger.info { "Game Over" }
+            gameOver()
         }
     }
 
@@ -294,7 +302,13 @@ class Game(
     }
 
     private suspend fun render() {
-        gameScene?.update(this)
+        gameScene?.render(this)
+    }
+
+    private suspend fun gameOver() {
+        logger.info { "Game Over\nFinal score: $score" }
+        gameOverScene?.render(this)
+        gameOverScene?.setStageScene()
     }
 
     companion object : KLogging()

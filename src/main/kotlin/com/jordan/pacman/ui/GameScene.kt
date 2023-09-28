@@ -16,11 +16,14 @@ import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
+import javafx.stage.Stage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.withContext
 
-class GameScene : SceneProvider {
+class GameScene(
+    stage: Stage
+) : SceneProvider(stage) {
 
     private val scoreText = Text("00").apply { styleClass.add("score-value") }
     private val scoreNode = VBox().apply {
@@ -64,7 +67,7 @@ class GameScene : SceneProvider {
         stylesheets.add("game.css")
     }
 
-    suspend fun update(game: Game) = withContext(Dispatchers.JavaFx) {
+    suspend fun render(game: Game) = withContext(Dispatchers.JavaFx) {
         graphicsContext.fill = Color.BLACK
         graphicsContext.fillRect(0.0, 0.0, canvas.width, canvas.height)
 

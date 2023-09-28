@@ -8,18 +8,6 @@
     -fx-font-size: 72;
 }
 
-.heading {
-    -fx-fill: white;
-    -fx-font-size: 36;
-    -fx-underline: true;
-}
-
-.gameOver {
-    -fx-stroke: white;
-    -fx-text-alignment: center;
-    -fx-font-size: 24;
-}
-
 .info {
     -fx-fill: white;
     -fx-font-size: 12;

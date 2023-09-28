@@ -6,51 +6,57 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.stage.Stage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.withContext
 import mu.KLogging
 
-class MenuScene(
+class GameOverScene(
     stage: Stage,
 ) : SceneProvider(stage) {
 
-    private val mainMenu = VBox().apply {
+    private val scoreText = Text("Score: 00").apply { styleClass.add("score") }
+    private val highScoreText = Text("High Score: 00").apply { styleClass.add("high-score") }
+
+    private val root = VBox().apply {
         alignment = Pos.CENTER
-        spacing = 10.0
+        spacing = 25.0
         padding = Insets(25.0)
 
         children.addAll(
-            Text("PAC-MAN").apply { styleClass.add("title") },
+            Text("GAME OVER").apply { styleClass.add("title") },
 
-            ImageView(Image("menu.png", true)).apply {
-                VBox.setMargin(this, Insets(100.0, 0.0, 50.0, 0.0))
-            },
+            scoreText,
+
+            highScoreText,
 
             Button().apply {
                 setOnAction {
                     Game(stage, newSingleThreadContext("Game Thread")).start()
                 }
-                setButtonTextAlternatingCaseOnHover("start game")
+                setButtonTextAlternatingCaseOnHover("new game")
             },
 
             Button().apply {
                 setOnAction { Platform.exit() }
                 setButtonTextAlternatingCaseOnHover("quit")
-            },
-
-            Text("Created by Jordan Huntbach\n2023").apply {
-                styleClass.add("info")
-                VBox.setMargin(this, Insets(50.0, 0.0, 0.0, 0.0))
             }
         )
     }
 
-    override val scene = Scene(mainMenu, 592.0, 720.0, Color.BLACK).apply { stylesheets.add("menu.css") }
+    override val scene = Scene(root, 592.0, 720.0, Color.BLACK).apply {
+        stylesheets.add("gameOver.css")
+    }
+
+    suspend fun render(game: Game) = withContext(Dispatchers.JavaFx) {
+        scoreText.text = "Score: ${game.score}"
+        highScoreText.text = "High Score: ${game.score}"
+    }
 
     companion object : KLogging()
 }
