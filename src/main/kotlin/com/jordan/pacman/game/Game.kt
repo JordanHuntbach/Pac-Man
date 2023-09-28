@@ -62,6 +62,10 @@ class Game(
     private var dotTimer = 0
     private var dotTimerLimit = 4 * 60
 
+    private var pacmanPausedFrames = 0
+    private var ghostsPausedFrames = 0
+    private var ghostsJustEaten = mutableSetOf<Ghost>()
+
     fun start() {
         launch(newSingleThreadContext("Game Thread")) {
             gameScene?.apply {
@@ -97,7 +101,9 @@ class Game(
     }
 
     private fun gameLoop() {
-        pacman.update(currentLevel, maze)
+        if (!pacmanIsPaused()) {
+            pacman.update(currentLevel, maze)
+        }
 
         val currentTile = maze.tileAt(pacman.position)
 
@@ -116,7 +122,12 @@ class Game(
 
         releaseGhosts(atePill)
 
-        ghosts.forEach { it.update(this) }
+        val ghostsArePaused = ghostsArePaused()
+        ghosts.forEach { ghost ->
+            if (!ghostsArePaused || (ghost.isEyes && ghost !in ghostsJustEaten)) {
+                ghost.update(this)
+            }
+        }
 
         handleGhostCollisions()
 
@@ -127,6 +138,26 @@ class Game(
         handleFruit()
 
         handleBonusPoints()
+    }
+
+    private fun pacmanIsPaused(): Boolean {
+        return if (pacmanPausedFrames > 0) {
+            pacmanPausedFrames--
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun ghostsArePaused(): Boolean {
+        return if (ghostsPausedFrames > 0) {
+            if (--ghostsPausedFrames == 0) {
+                ghostsJustEaten.clear()
+            }
+            true
+        } else {
+            false
+        }
     }
 
     private fun handleFruit() {
@@ -210,7 +241,7 @@ class Game(
         return if (currentTile is Pill && currentTile.isActive) {
             currentTile.isActive = false
             score += 10
-            pacman.manualFramePauses = 1
+            pacmanPausedFrames = 1
             globalDotCounter++
             dotTimer = 0
             true
@@ -224,7 +255,7 @@ class Game(
             ghostsEatenWithOneEnergizer = 0
             currentTile.isActive = false
             score += 50
-            pacman.manualFramePauses = 3
+            pacmanPausedFrames = 3
             pacman.energize()
             ghosts.forEach { if (!it.isEyes) it.scare() }
             globalDotCounter++
@@ -254,9 +285,10 @@ class Game(
         logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
         score += reward
         bonusPoints.reward(ghost.position, reward)
-        pacman.manualFramePauses = 60
-        ghosts.forEach { if (!it.isEyes) it.manualFramePauses = 60 }
+        pacmanPausedFrames = 60
+        ghostsPausedFrames = 60
         ghost.eaten()
+        ghostsJustEaten.add(ghost)
     }
 
     private fun eatenBy(ghost: Ghost) {
@@ -266,6 +298,8 @@ class Game(
         lives--
         livesLostThisLevel++
         globalDotCounter = 0
+        pacmanPausedFrames = 90
+        ghostsPausedFrames = 90
     }
 
     private fun handleGhostMode() {
@@ -299,6 +333,10 @@ class Game(
         globalDotCounter = 0
         dotTimer = 0
         dotTimerLimit = currentLevel.dotTimerLimit
+
+        pacmanPausedFrames = 90
+        ghostsPausedFrames = 90
+        ghostsJustEaten.clear()
     }
 
     private suspend fun render() {

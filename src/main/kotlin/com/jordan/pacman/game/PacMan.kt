@@ -19,8 +19,6 @@ class PacMan {
     private var isFrightening = false
     private var frighteningTicks = 0
 
-    var manualFramePauses = 0
-
     private var normalSpeed = Levels[0].pacmanNormalSpeed
     private var frighteningSpeed = Levels[0].pacmanFrighteningSpeed
 
@@ -63,8 +61,6 @@ class PacMan {
         isFrightening = false
         frighteningTicks = 0
 
-        manualFramePauses = 90
-
         normalSpeed = level.pacmanNormalSpeed
         frighteningSpeed = level.pacmanFrighteningSpeed
 
@@ -72,10 +68,6 @@ class PacMan {
     }
 
     fun update(level: Level, maze: Maze) {
-        if (isPaused()) {
-            return
-        }
-
         if (isFrightening) {
             if (frighteningTicks++ == level.scaredLimit) {
                 isFrightening = false
@@ -94,15 +86,6 @@ class PacMan {
         for (i in 0..<speed[speedTicks++]) {
             move(maze)
             teleportIfAtEndOfTunnel()
-        }
-    }
-
-    private fun isPaused(): Boolean {
-        return if (manualFramePauses > 0) {
-            manualFramePauses--
-            true
-        } else {
-            false
         }
     }
 

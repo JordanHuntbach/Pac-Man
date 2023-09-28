@@ -42,8 +42,6 @@ abstract class Ghost {
     var dotCounter = 0
     abstract val dotLimit: Int
 
-    var manualFramePauses = 0
-
     protected var normalSpeed = Levels[0].ghostNormalSpeed
     private var tunnelSpeed = Levels[0].ghostTunnelSpeed
     private var scaredSpeed = Levels[0].ghostScaredSpeed
@@ -98,8 +96,6 @@ abstract class Ghost {
 
         dotCounter = 0
 
-        manualFramePauses = 90
-
         normalSpeed = level.ghostNormalSpeed
         tunnelSpeed = level.ghostTunnelSpeed
         scaredSpeed = level.ghostScaredSpeed
@@ -137,10 +133,6 @@ abstract class Ghost {
      * and decide where to go from there.
      */
     fun update(game: Game) {
-        if (isPaused()) {
-            return
-        }
-
         if (isScared) {
             if (scaredTickCount++ == scaredTickLimit) {
                 isScared = false
@@ -171,15 +163,6 @@ abstract class Ghost {
                     move(game)
                 }
             }
-        }
-    }
-
-    private fun isPaused(): Boolean {
-        return if (manualFramePauses > 0) {
-            manualFramePauses--
-            true
-        } else {
-            false
         }
     }
 
