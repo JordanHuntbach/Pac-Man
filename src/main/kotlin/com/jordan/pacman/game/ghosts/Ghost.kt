@@ -64,9 +64,9 @@ abstract class Ghost {
                 Direction.RIGHT -> eyesRightImage
             }
         } else if (isScared) {
-            if (scaredTickCount < scaredTickLimit - scaredFlashes * 20) {
+            if (scaredTickCount < scaredTickLimit - scaredFlashes * 24) {
                 scaredBlueImage
-            } else if ((scaredTickCount / 10) % 2 == 0) {
+            } else if ((scaredTickCount / 12) % 2 == 0) {
                 scaredWhiteImage
             } else {
                 scaredBlueImage

@@ -60,7 +60,7 @@ class Game(
     private var livesLostThisLevel = 0
     private var globalDotCounter = 0
     private var dotTimer = 0
-    private var dotTimerLimit = 4 * 60
+    private var dotTimerLimit = 4 * 75
 
     private var pacmanPausedFrames = 0
     private var ghostsPausedFrames = 0
@@ -74,7 +74,7 @@ class Game(
             }
 
             while (lives > 0) {
-                targeting(millisPerFrame = 16) {
+                targeting(millisPerFrame = 12) {
                     if (preGameFrameCounter >= 0) {
                         preGameFrameCounter--
                     } else {
@@ -200,30 +200,33 @@ class Game(
             return
         }
 
-        if (atePill) {
-            if (livesLostThisLevel == 0) {
-                for (ghost in ghosts) {
-                    if (ghost.isInGhostHouse) {
-                        if (ghost.dotCounter++ >= ghost.dotLimit) {
-                            logger.debug { "Releasing ${ghost.javaClass.simpleName} from ghost house - hit personal counter" }
-                            ghost.leaveGhostHouse()
-                        }
-                        return
+        if (livesLostThisLevel == 0) {
+            for (ghost in ghosts) {
+                if (ghost.isInGhostHouse) {
+                    if (atePill) {
+                        ghost.dotCounter++
                     }
-                }
-            } else {
-                if (globalDotCounter == 7 && pinky.isInGhostHouse) {
-                    logger.debug { "Releasing Pinky from ghost house - hit global counter" }
-                    pinky.leaveGhostHouse()
-                } else if (globalDotCounter == 17 && inky.isInGhostHouse) {
-                    logger.debug { "Releasing Inky from ghost house - hit global counter" }
-                    inky.leaveGhostHouse()
-                } else if (globalDotCounter == 32 && clyde.isInGhostHouse) {
-                    logger.debug { "Releasing Clyde from ghost house - hit global counter" }
-                    clyde.leaveGhostHouse()
+                    if (ghost.dotCounter >= ghost.dotLimit) {
+                        logger.debug { "Releasing ${ghost.javaClass.simpleName} from ghost house - hit personal counter" }
+                        ghost.leaveGhostHouse()
+                    }
+                    return
                 }
             }
         } else {
+            if (globalDotCounter == 7 && pinky.isInGhostHouse) {
+                logger.debug { "Releasing Pinky from ghost house - hit global counter" }
+                pinky.leaveGhostHouse()
+            } else if (globalDotCounter == 17 && inky.isInGhostHouse) {
+                logger.debug { "Releasing Inky from ghost house - hit global counter" }
+                inky.leaveGhostHouse()
+            } else if (globalDotCounter == 32 && clyde.isInGhostHouse) {
+                logger.debug { "Releasing Clyde from ghost house - hit global counter" }
+                clyde.leaveGhostHouse()
+            }
+        }
+
+        if (!atePill) {
             if (++dotTimer >= dotTimerLimit) {
                 for (ghost in ghosts) {
                     if (ghost.isInGhostHouse) {
