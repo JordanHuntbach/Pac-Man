@@ -1,5 +1,6 @@
 package com.jordan.pacman.ui
 
+import com.jordan.pacman.Globals
 import com.jordan.pacman.game.Game
 import javafx.application.Platform
 import javafx.geometry.Insets
@@ -50,7 +51,7 @@ class MenuScene(
         )
     }
 
-    override val scene = Scene(mainMenu, 592.0, 720.0, Color.BLACK).apply { stylesheets.add("menu.css") }
+    override val scene = Scene(mainMenu, 28.0 * Globals.TILE_SIZE, 35.0 * Globals.TILE_SIZE, Color.BLACK).apply { stylesheets.add("menu.css") }
 
     companion object : KLogging()
 }

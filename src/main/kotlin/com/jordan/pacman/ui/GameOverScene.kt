@@ -1,5 +1,6 @@
 package com.jordan.pacman.ui
 
+import com.jordan.pacman.Globals
 import com.jordan.pacman.game.Game
 import javafx.application.Platform
 import javafx.geometry.Insets
@@ -49,7 +50,7 @@ class GameOverScene(
         )
     }
 
-    override val scene = Scene(root, 592.0, 720.0, Color.BLACK).apply {
+    override val scene = Scene(root, 28.0 * Globals.TILE_SIZE, 35.0 * Globals.TILE_SIZE, Color.BLACK).apply {
         stylesheets.add("gameOver.css")
     }
 
