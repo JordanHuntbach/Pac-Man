@@ -14,46 +14,49 @@ import com.jordan.pacman.game.tiles.Tile
 import javafx.scene.image.Image
 import mu.KLogging
 
-abstract class Ghost {
+abstract class Ghost(
+    var position: Position,
+
+    var currentDirection: Direction,
+    var nextDirection: Direction,
+    var directionFromNextTile: Direction,
+
+    var isScared: Boolean = false,
+    var isEyes: Boolean = false,
+    var isInGhostHouse: Boolean,
+
+    var isEnteringGhostHouse: Boolean = false,
+    protected var isLeavingGhostHouse: Boolean = false,
+
+    protected var scaredTickCount: Int = 0,
+    protected var scaredTickLimit: Int = Levels[0].scaredLimit,
+    protected var scaredFlashes: Int = Levels[0].scaredFlashes,
+
+    var dotCounter: Int = 0,
+
+    protected var normalSpeed: IntArray = Levels[0].ghostNormalSpeed,
+    protected var tunnelSpeed: IntArray = Levels[0].ghostTunnelSpeed,
+    protected var scaredSpeed: IntArray = Levels[0].ghostScaredSpeed,
+    protected var eyesSpeed: IntArray = Levels[0].ghostEyesSpeed,
+    protected var houseSpeed: IntArray = Levels[0].ghostHouseSpeed,
+
+    protected var speedTicks: Int = 0,
+
+    protected var shouldReverse: Boolean = false,
+    protected var switchedModesWhileInGhostHouse: Boolean = false,
+
+    var hasBeenReleased: Boolean = false,
+
+    var dotLimit: Int
+) {
+    abstract val name: String
 
     abstract val startingPosition: Position
-    abstract var position: Position
-
-    abstract var currentDirection: Direction
-    abstract var nextDirection: Direction
-    abstract var directionFromNextTile: Direction
 
     abstract val upImage: Image
     abstract val downImage: Image
     abstract val leftImage: Image
     abstract val rightImage: Image
-
-    var isScared = false
-    var isEyes = false
-    abstract var isInGhostHouse: Boolean
-
-    var isEnteringGhostHouse = false
-    private var isLeavingGhostHouse = false
-
-    private var scaredTickCount = 0
-    private var scaredTickLimit = Levels[0].scaredLimit
-    private var scaredFlashes = Levels[0].scaredFlashes
-
-    var dotCounter = 0
-    abstract val dotLimit: Int
-
-    protected var normalSpeed = Levels[0].ghostNormalSpeed
-    private var tunnelSpeed = Levels[0].ghostTunnelSpeed
-    private var scaredSpeed = Levels[0].ghostScaredSpeed
-    private var eyesSpeed = Levels[0].ghostEyesSpeed
-    private var houseSpeed = Levels[0].ghostHouseSpeed
-
-    private var speedTicks = 0
-
-    private var shouldReverse = false
-    private var switchedModesWhileInGhostHouse = false
-
-    var hasBeenReleased = false
 
     fun getImage(): Image {
         return if (isEyes) {
@@ -292,6 +295,8 @@ abstract class Ghost {
         val currentTile = maze.tileAt(position)
         return currentTile is EmptyTile && currentTile.isTunnel
     }
+
+    abstract fun copy(): Ghost
 
     companion object : KLogging() {
         val eyesUpImage = Image("$SPRITES_BASE_PATH/ghosts/eyes/eyesUp.png")

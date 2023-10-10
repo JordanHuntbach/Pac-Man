@@ -4,12 +4,17 @@ import com.jordan.pacman.Globals.SPRITES_BASE_PATH
 import com.jordan.pacman.game.Position
 import javafx.scene.image.Image
 
-class Wall(
+data class Wall(
     override val position: Position,
     override val image: Image,
+    override var isActive: Boolean = true,
 ) : Tile {
+
     override val navigable = false
-    override var isActive = true
+
+    override fun copy(): Wall {
+        return Wall(position.copy(), image, isActive)
+    }
 
     companion object {
         val cornerBottomLeft = Image("$SPRITES_BASE_PATH/walls/corner-bottom-left.png")

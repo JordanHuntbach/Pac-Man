@@ -5,24 +5,25 @@ import com.jordan.pacman.Globals.SPRITES_BASE_PATH
 import com.jordan.pacman.Globals.TILE_SIZE
 import javafx.scene.image.Image
 
-class PacMan {
+data class PacMan(
 
-    private val startingPosition = Position(14.0 * TILE_SIZE, 23.5 * TILE_SIZE)
-    var position = startingPosition
+    private val startingPosition: Position = Position(14.0 * TILE_SIZE, 23.5 * TILE_SIZE),
+    var position: Position = startingPosition,
 
-    var currentDirection: Direction? = null
-    var nextDirection: Direction? = null
+    var currentDirection: Direction? = null,
+    var nextDirection: Direction? = null,
 
-    private var mouthOpen = true
-    private var mouthOpenTicks = 0
+    private var mouthOpen: Boolean = true,
+    private var mouthOpenTicks: Int = 0,
 
-    private var isFrightening = false
-    private var frighteningTicks = 0
+    private var isFrightening: Boolean = false,
+    private var frighteningTicks: Int = 0,
 
-    private var normalSpeed = Levels[0].pacmanNormalSpeed
-    private var frighteningSpeed = Levels[0].pacmanFrighteningSpeed
+    private var normalSpeed: IntArray = Levels[0].pacmanNormalSpeed,
+    private var frighteningSpeed: IntArray = Levels[0].pacmanFrighteningSpeed,
 
-    private var speedTicks = 0
+    private var speedTicks: Int = 0,
+) {
 
     private fun tick() {
         if (++mouthOpenTicks == 7) {

@@ -14,60 +14,60 @@ import javafx.stage.Stage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import mu.KLogging
 import java.time.Instant
 import java.time.temporal.ChronoUnit.MILLIS
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.pow
 
-class Game(
-    stage: Stage?,
-    override val coroutineContext: CoroutineContext
+data class Game(
+    private val stage: Stage?,
+    override val coroutineContext: CoroutineContext,
+
+    private val gameScene: GameScene? = stage?.let { GameScene(it) },
+    private val gameOverScene: GameOverScene? = stage?.let { GameOverScene(it) },
+
+    var preGame: Boolean = true,
+    private var preGameFrameCounter: Int = 120,
+
+    var score: Int = 0,
+    var lives: Int = 3,
+    var levelCounter: Int = 0,
+    var currentLevel: Level = Levels[levelCounter],
+
+    val maze: Maze = Maze(),
+
+    val pacman: PacMan = PacMan(),
+
+    val blinky: Blinky = Blinky(),
+    val pinky: Pinky = Pinky(),
+    val inky: Inky = Inky(),
+    val clyde: Clyde = Clyde(),
+
+    val fruit: Fruit = Fruit(),
+
+    val bonusPoints: BonusPoints = BonusPoints(),
+
+    private var ghostsEatenWithOneEnergizer: Int = 0,
+
+    private var ghostMode: Int = 0,
+    private var ghostModeTickCount: Int = 0,
+    private var ghostModeTicks: IntArray = currentLevel.scatterAndChaseTimes,
+
+    private var livesLostThisLevel: Int = 0,
+    private var globalDotCounter: Int = 0,
+    private var dotTimer: Int = 0,
+    private var dotTimerLimit: Int = 4 * 75,
+
+    private var pacmanPausedFrames: Int = 0,
+    private var ghostsPausedFrames: Int = 0,
+    private var ghostsJustEaten: MutableSet<String> = mutableSetOf(),
 ) : CoroutineScope {
 
-    private val gameScene = stage?.let { GameScene(it) }
-    private val gameOverScene = stage?.let { GameOverScene(it) }
+    val ghosts: List<Ghost> = listOf(blinky, pinky, inky, clyde)
 
-    var preGame = true
-    private var preGameFrameCounter = 120
-
-    var score = 0
-    var lives = 3
-    var levelCounter = 0
-    var currentLevel = Levels[levelCounter]
-
-    val maze = Maze()
-
-    val pacman = PacMan()
-
-    val blinky = Blinky()
-    val pinky = Pinky()
-    val inky = Inky()
-    val clyde = Clyde()
-    val ghosts = listOf(blinky, pinky, inky, clyde)
-
-    val fruit = Fruit()
-
-    val bonusPoints = BonusPoints()
-
-    private var ghostsEatenWithOneEnergizer = 0
-
-    private var ghostMode = 0
-    private var ghostModeTickCount = 0
-    private var ghostModeTicks = currentLevel.scatterAndChaseTimes
-
-    private var livesLostThisLevel = 0
-    private var globalDotCounter = 0
-    private var dotTimer = 0
-    private var dotTimerLimit = 4 * 75
-
-    private var pacmanPausedFrames = 0
-    private var ghostsPausedFrames = 0
-    private var ghostsJustEaten = mutableSetOf<Ghost>()
-
-    fun start() {
-        launch(newSingleThreadContext("Game Thread")) {
+    fun playGameToCompletion() {
+        launch {
             gameScene?.apply {
                 setStageScene()
                 registerDirectionCallback { pacman.nextDirection = it }
@@ -124,7 +124,7 @@ class Game(
 
         val ghostsArePaused = ghostsArePaused()
         ghosts.forEach { ghost ->
-            if (!ghostsArePaused || (ghost.isEyes && ghost !in ghostsJustEaten)) {
+            if (!ghostsArePaused || (ghost.isEyes && ghost.name !in ghostsJustEaten)) {
                 ghost.update(this)
             }
         }
@@ -207,7 +207,7 @@ class Game(
                         ghost.dotCounter++
                     }
                     if (ghost.dotCounter >= ghost.dotLimit) {
-                        logger.debug { "Releasing ${ghost.javaClass.simpleName} from ghost house - hit personal counter" }
+                        logger.debug { "Releasing ${ghost.name} from ghost house - hit personal counter" }
                         ghost.leaveGhostHouse()
                     }
                     return
@@ -230,7 +230,7 @@ class Game(
             if (++dotTimer >= dotTimerLimit) {
                 for (ghost in ghosts) {
                     if (ghost.isInGhostHouse) {
-                        logger.debug { "Releasing ${ghost.javaClass.simpleName} from ghost house - hit timer limit" }
+                        logger.debug { "Releasing ${ghost.name} from ghost house - hit timer limit" }
                         ghost.leaveGhostHouse()
                         dotTimer = 0
                         return
@@ -285,17 +285,17 @@ class Game(
 
     private fun eat(ghost: Ghost) {
         val reward = 200 * 2.0.pow(ghostsEatenWithOneEnergizer++).toInt()
-        logger.debug { "Pac-Man ate ${ghost.javaClass.simpleName} for $reward points" }
+        logger.debug { "Pac-Man ate ${ghost.name} for $reward points" }
         score += reward
         bonusPoints.reward(ghost.position, reward)
         pacmanPausedFrames = 60
         ghostsPausedFrames = 60
         ghost.eaten()
-        ghostsJustEaten.add(ghost)
+        ghostsJustEaten.add(ghost.name)
     }
 
     private fun eatenBy(ghost: Ghost) {
-        logger.debug { "Pac-Man eaten by ${ghost.javaClass.simpleName}" }
+        logger.debug { "Pac-Man eaten by ${ghost.name}" }
         pacman.reset(currentLevel)
         ghosts.forEach { it.reset(currentLevel) }
         lives--
@@ -350,6 +350,52 @@ class Game(
         logger.info { "Game Over\nFinal score: $score" }
         gameOverScene?.render(this)
         gameOverScene?.setStageScene()
+    }
+
+    fun deepCopy(): Game {
+        return Game(
+            stage = stage,
+            coroutineContext = coroutineContext,
+
+            gameScene = gameScene,
+            gameOverScene = gameOverScene,
+
+            preGame = preGame,
+            preGameFrameCounter = preGameFrameCounter,
+
+            score = score,
+            lives = lives,
+            levelCounter = levelCounter,
+            currentLevel = currentLevel,
+
+            maze = maze.copy(),
+
+            pacman = pacman.copy(),
+
+            blinky = blinky.copy(),
+            pinky = pinky.copy(),
+            inky = inky.copy(),
+            clyde = clyde.copy(),
+
+            fruit = fruit.copy(),
+
+            bonusPoints = bonusPoints.copy(),
+
+            ghostsEatenWithOneEnergizer = ghostsEatenWithOneEnergizer,
+
+            ghostMode = ghostMode,
+            ghostModeTickCount = ghostModeTickCount,
+            ghostModeTicks = ghostModeTicks,
+
+            livesLostThisLevel = livesLostThisLevel,
+            globalDotCounter = globalDotCounter,
+            dotTimer = dotTimer,
+            dotTimerLimit = dotTimerLimit,
+
+            pacmanPausedFrames = pacmanPausedFrames,
+            ghostsPausedFrames = ghostsPausedFrames,
+            ghostsJustEaten = ghostsJustEaten.toMutableSet()
+        )
     }
 
     companion object : KLogging()

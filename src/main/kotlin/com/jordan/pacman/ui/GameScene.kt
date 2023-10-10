@@ -71,9 +71,11 @@ class GameScene(
         graphicsContext.fill = Color.BLACK
         graphicsContext.fillRect(0.0, 0.0, canvas.width, canvas.height)
 
-        for (tile in game.maze.flatTiles) {
-            if (tile.image != null && tile.isActive) {
-                graphicsContext.drawImage(tile.image, tile.position.x, tile.position.y)
+        for (row in game.maze.tiles) {
+            for (tile in row) {
+                if (tile.image != null && tile.isActive) {
+                    graphicsContext.drawImage(tile.image, tile.position.x, tile.position.y)
+                }
             }
         }
 
@@ -123,8 +125,8 @@ class GameScene(
         if (game.bonusPoints.isActive()) {
             bonusPointsText.text = game.bonusPoints.points.toString()
 
-            val width = game.maze.widthTiles * TILE_SIZE
-            val height = game.maze.heightTiles * TILE_SIZE
+            val width = 28 * TILE_SIZE
+            val height = 31 * TILE_SIZE
 
             val xCenter = width / 2
             val yCenter = height / 2

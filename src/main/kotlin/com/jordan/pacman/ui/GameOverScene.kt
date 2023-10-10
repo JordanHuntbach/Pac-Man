@@ -38,7 +38,7 @@ class GameOverScene(
 
             Button().apply {
                 setOnAction {
-                    Game(stage, newSingleThreadContext("Game Thread")).start()
+                    Game(stage, newSingleThreadContext("Game Thread")).playGameToCompletion()
                 }
                 setButtonTextAlternatingCaseOnHover("new game")
             },

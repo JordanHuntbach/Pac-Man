@@ -7,14 +7,13 @@ import mu.KLogging
 import java.time.Instant
 import kotlin.random.Random.Default.nextLong
 
-class Fruit {
+data class Fruit(
+    var image: Image = cherry,
+    var isActive: Boolean = false,
+    private var despawnTime: Instant? = null
+) {
 
     val position = Position(14.0 * TILE_SIZE, 17.5 * TILE_SIZE)
-    var image = cherry
-
-    var isActive = false
-
-    private var despawnTime: Instant? = null
 
     fun spawn() {
         val activeTimeMillis = nextLong(9_000, 10_000)
