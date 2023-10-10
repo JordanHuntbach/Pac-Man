@@ -21,4 +21,20 @@ data class Position(
     fun distanceTo(position: Position): Double {
         return sqrt((x - position.x).pow(2.0) + (y - position.y).pow(2.0))
     }
+
+    fun directionTo(position: Position): Direction? {
+        if (position.x < this.x) {
+            return Direction.UP
+        }
+        if (position.x > this.x) {
+            return Direction.DOWN
+        }
+        if (position.y < this.y) {
+            return Direction.LEFT
+        }
+        if (position.y > this.y) {
+            return Direction.RIGHT
+        }
+        return null
+    }
 }

@@ -114,7 +114,7 @@ data class PacMan(
         return maze.tileInDirection(position, direction).navigable
     }
 
-    private fun canMove(maze: Maze, direction: Direction?): Boolean {
+    fun canMove(maze: Maze, direction: Direction?): Boolean {
         if (direction == null) {
             return false
         }
@@ -124,6 +124,19 @@ data class PacMan(
             return canMoveToNextTile || maze.willNotPassTileCentre(position, direction, SCALING_FACTOR.toDouble())
         }
         return canMoveToNextTile
+    }
+
+    fun validMoves(maze: Maze): List<Direction> {
+        return Direction.entries.filter { canMove(maze, it) }
+    }
+
+    fun isAtJunction(maze: Maze): Boolean {
+        val directionsCanMoveIn = validMoves(maze)
+        return directionsCanMoveIn.size != 2 || directionsCanMoveIn[0].reverse() != directionsCanMoveIn[1]
+    }
+
+    fun isInCentreOfJunction(maze: Maze): Boolean {
+        return isAtJunction(maze) && maze.inCentreOfTile(position)
     }
 
     private fun teleportIfAtEndOfTunnel() {

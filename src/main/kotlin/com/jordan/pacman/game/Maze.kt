@@ -42,10 +42,21 @@ class Maze(
         return tiles[tileRow][tileColumn]
     }
 
+    fun inCentreOfTile(position: Position): Boolean {
+        return position.x.toInt() % TILE_SIZE / SCALING_FACTOR == 3 && position.y.toInt() % TILE_SIZE / SCALING_FACTOR == 4
+    }
+
     fun inCentreOfTileAlongDirection(position: Position, direction: Direction): Boolean {
         return when (direction) {
             Direction.UP, Direction.DOWN -> position.y.toInt() % TILE_SIZE / SCALING_FACTOR == 4
             Direction.LEFT, Direction.RIGHT -> position.x.toInt() % TILE_SIZE / SCALING_FACTOR == 3
+        }
+    }
+
+    fun inCentreOfTileOrthogonalToDirection(position: Position, direction: Direction): Boolean {
+        return when (direction) {
+            Direction.LEFT, Direction.RIGHT -> position.y.toInt() % TILE_SIZE / SCALING_FACTOR == 4
+            Direction.UP, Direction.DOWN -> position.x.toInt() % TILE_SIZE / SCALING_FACTOR == 3
         }
     }
 

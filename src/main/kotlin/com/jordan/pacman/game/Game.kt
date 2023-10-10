@@ -66,12 +66,16 @@ data class Game(
 
     val ghosts: List<Ghost> = listOf(blinky, pinky, inky, clyde)
 
+    suspend fun initialise() {
+        gameScene?.apply {
+            setStageScene()
+            registerDirectionCallback { pacman.nextDirection = it }
+        }
+    }
+
     fun playGameToCompletion() {
         launch {
-            gameScene?.apply {
-                setStageScene()
-                registerDirectionCallback { pacman.nextDirection = it }
-            }
+            initialise()
 
             while (lives > 0) {
                 targeting(millisPerFrame = 12) {
@@ -87,6 +91,11 @@ data class Game(
 
             gameOver()
         }
+    }
+
+    fun playSingleFrame(direction: Direction?) {
+        pacman.nextDirection = direction
+        gameLoop()
     }
 
     fun scatterMode() = ghostMode % 2 == 0
@@ -342,7 +351,7 @@ data class Game(
         ghostsJustEaten.clear()
     }
 
-    private suspend fun render() {
+    suspend fun render() {
         gameScene?.render(this)
     }
 
