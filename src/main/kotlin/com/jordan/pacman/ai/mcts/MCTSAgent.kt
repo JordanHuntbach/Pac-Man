@@ -25,7 +25,7 @@ class MCTSAgent(
 
             while (game.lives > 0) {
                 val mcts = MCTS(game, selectionPolicy, expansionPolicy, simulationPolicy, evaluationPolicy)
-                mcts.run(40)
+                mcts.run(60)
                 mcts.selectBestMoves()?.forEach { direction ->
                     game.playSingleFrame(direction)
                     game.render()
