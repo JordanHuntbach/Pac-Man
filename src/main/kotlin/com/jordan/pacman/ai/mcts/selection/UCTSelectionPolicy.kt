@@ -18,7 +18,7 @@ import kotlin.math.sqrt
 class UCTSelectionPolicy(
     private val explorationCoefficient: Int = 10
 ) : SelectionPolicy {
-    override fun select(parent: Node, nodes: Collection<Node>) = nodes.sortedBy { node ->
+    override fun select(parent: Node, nodes: Collection<Node>) = nodes.sortedByDescending { node ->
         if (node.visitCount == 0) {
             Double.MAX_VALUE
         } else {
