@@ -10,20 +10,21 @@ import com.jordan.pacman.game.tiles.Tile
  * Note that tiles are 8 x 8 pixels, so the 'centre' is considered as (3,4).
  */
 class Maze(
-    val tiles: Array<Array<Tile>> = standardMaze
+    val tiles: Array<Array<Tile>> = standardMaze,
+    var dotsEaten: Int = 0,
 ) {
 
     private val pills = tiles.flatten().filter { it is Pill || it is PowerPill }
+    private val numberOfDots = pills.size
 
     fun reset() {
         pills.forEach { it.isActive = true }
+        dotsEaten = 0
     }
 
-    fun allDotsEaten() = pills.all { !it.isActive }
+    fun allDotsEaten() = dotsEaten == numberOfDots
 
-    fun dotsEaten() = pills.count { !it.isActive }
-
-    fun remainingDots() = pills.count { it.isActive }
+    fun remainingDots() = numberOfDots - dotsEaten
 
     fun stillWithinSameTile(position: Position, direction: Direction, distance: Double): Boolean {
         val xWithinTile = position.x.toInt() % TILE_SIZE
@@ -126,6 +127,9 @@ class Maze(
     }
 
     fun copy(): Maze {
-        return Maze(tiles.map { row -> row.map { it.copy() }.toTypedArray() }.toTypedArray())
+        return Maze(
+            tiles = tiles.map { row -> row.map { it.copy() }.toTypedArray() }.toTypedArray(),
+            dotsEaten = dotsEaten
+        )
     }
 }

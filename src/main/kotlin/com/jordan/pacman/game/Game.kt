@@ -119,7 +119,7 @@ data class Game(
         val atePill = eatPill(currentTile) || eatPowerPill(currentTile)
 
         if (atePill) {
-            if (maze.dotsEaten() == 70 || maze.dotsEaten() == 170) {
+            if (maze.dotsEaten == 70 || maze.dotsEaten == 170) {
                 fruit.spawn()
             }
             if (maze.allDotsEaten()) {
@@ -252,6 +252,7 @@ data class Game(
     private fun eatPill(currentTile: Tile): Boolean {
         return if (currentTile is Pill && currentTile.isActive) {
             currentTile.isActive = false
+            maze.dotsEaten++
             score += 10
             pacmanPausedFrames = 1
             globalDotCounter++
@@ -266,6 +267,7 @@ data class Game(
         return if (currentTile is PowerPill && currentTile.isActive) {
             ghostsEatenWithOneEnergizer = 0
             currentTile.isActive = false
+            maze.dotsEaten++
             score += 50
             pacmanPausedFrames = 3
             pacman.energize()
