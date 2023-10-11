@@ -10,7 +10,7 @@ import com.jordan.pacman.game.Position
 import javafx.scene.image.Image
 
 class Inky(
-    position: Position = Position(12.0 * TILE_SIZE, 14.5 * TILE_SIZE),
+    position: Position = Companion.startingPosition,
 
     currentDirection: Direction = Direction.UP,
     nextDirection: Direction = Direction.LEFT,
@@ -78,14 +78,15 @@ class Inky(
 
     dotLimit = dotLimit,
 ) {
-    override val name = "Inky"
 
-    override val startingPosition = Position(12.0 * TILE_SIZE, 14.5 * TILE_SIZE)
+    override val name = NAME
 
-    override val upImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyUp.png")
-    override val downImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyDown.png")
-    override val leftImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyLeft.png")
-    override val rightImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyRight.png")
+    override val startingPosition = Companion.startingPosition
+
+    override val upImage = Companion.upImage
+    override val downImage = Companion.downImage
+    override val leftImage = Companion.leftImage
+    override val rightImage = Companion.rightImage
 
     override fun reset(level: Level) {
         super.reset(level)
@@ -167,5 +168,16 @@ class Inky(
 
             dotLimit = dotLimit,
         )
+    }
+
+    companion object {
+        const val NAME = "Inky"
+
+        val startingPosition = Position(12.0 * TILE_SIZE, 14.5 * TILE_SIZE)
+
+        val upImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyUp.png")
+        val downImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyDown.png")
+        val leftImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyLeft.png")
+        val rightImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/inky/inkyRight.png")
     }
 }

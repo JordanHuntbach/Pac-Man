@@ -10,7 +10,7 @@ import com.jordan.pacman.game.Position
 import javafx.scene.image.Image
 
 class Clyde(
-    position: Position = Position(16.0 * TILE_SIZE, 14.5 * TILE_SIZE),
+    position: Position = Companion.startingPosition,
 
     currentDirection: Direction = Direction.UP,
     nextDirection: Direction = Direction.LEFT,
@@ -78,14 +78,15 @@ class Clyde(
 
     dotLimit = dotLimit
 ) {
-    override val name = "Clyde"
 
-    override val startingPosition = Position(16.0 * TILE_SIZE, 14.5 * TILE_SIZE)
+    override val name = NAME
 
-    override val upImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeUp.png")
-    override val downImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeDown.png")
-    override val leftImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeLeft.png")
-    override val rightImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeRight.png")
+    override val startingPosition = Companion.startingPosition
+
+    override val upImage = Companion.upImage
+    override val downImage = Companion.downImage
+    override val leftImage = Companion.leftImage
+    override val rightImage = Companion.rightImage
 
     override fun reset(level: Level) {
         super.reset(level)
@@ -168,4 +169,14 @@ class Clyde(
         )
     }
 
+    companion object {
+        const val NAME = "Clyde"
+
+        val startingPosition = Position(16.0 * TILE_SIZE, 14.5 * TILE_SIZE)
+
+        val upImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeUp.png")
+        val downImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeDown.png")
+        val leftImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeLeft.png")
+        val rightImage = Image("${Globals.SPRITES_BASE_PATH}/ghosts/clyde/clydeRight.png")
+    }
 }

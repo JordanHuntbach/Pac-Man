@@ -13,7 +13,7 @@ import com.jordan.pacman.game.ghosts.Blinky.State.NORMAL
 import javafx.scene.image.Image
 
 class Blinky(
-    position: Position = Position(14.0 * TILE_SIZE, 11.5 * TILE_SIZE),
+    position: Position = Companion.startingPosition,
 
     currentDirection: Direction = Direction.LEFT,
     nextDirection: Direction = Direction.LEFT,
@@ -81,14 +81,15 @@ class Blinky(
 
     dotLimit = 0,
 ) {
-    override val name = "Blinky"
 
-    override val startingPosition = Position(14.0 * TILE_SIZE, 11.5 * TILE_SIZE)
+    override val name = NAME
 
-    override val upImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyUp.png")
-    override val downImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyDown.png")
-    override val leftImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyLeft.png")
-    override val rightImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyRight.png")
+    override val startingPosition = Companion.startingPosition
+
+    override val upImage = Companion.upImage
+    override val downImage = Companion.downImage
+    override val leftImage = Companion.leftImage
+    override val rightImage = Companion.rightImage
 
     override fun reset(level: Level) {
         super.reset(level)
@@ -176,5 +177,16 @@ class Blinky(
         NORMAL,
         CRUISE_ELROY,
         CRUISE_ELROY_2
+    }
+
+    companion object {
+        const val NAME = "Blinky"
+
+        val startingPosition = Position(14.0 * TILE_SIZE, 11.5 * TILE_SIZE)
+
+        val upImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyUp.png")
+        val downImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyDown.png")
+        val leftImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyLeft.png")
+        val rightImage = Image("$SPRITES_BASE_PATH/ghosts/blinky/blinkyRight.png")
     }
 }
