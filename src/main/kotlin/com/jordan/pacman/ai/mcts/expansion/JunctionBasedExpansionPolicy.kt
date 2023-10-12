@@ -5,7 +5,7 @@ import com.jordan.pacman.game.Direction
 
 /**
  * Expands the node by adding a child for Pac-Man travelling in each possible direction to the next junction.
- * If Pac-Man is eaten on the way to the junction, a node is placed there.
+ * If Pac-Man collides with a ghost on the way to the junction, a node is placed there.
  */
 class JunctionBasedExpansionPolicy : ExpansionPolicy {
     override fun expand(parentNode: Node): List<Node> {
@@ -16,11 +16,12 @@ class JunctionBasedExpansionPolicy : ExpansionPolicy {
 
             val game = parentNode.gameState.deepCopy()
             val lives = game.lives
+            val ghostsEaten = game.ghostsJustEaten.size
             val instructions = mutableListOf<Direction?>()
             do {
                 instructions.add(direction)
                 game.playSingleFrame(direction)
-            } while (!game.pacman.isInCentreOfJunction(game.maze) && game.lives == lives)
+            } while (!game.pacman.isInCentreOfJunction(game.maze) && game.lives == lives && game.ghostsJustEaten.size == ghostsEaten)
             newNodes.add(
                 Node(
                     gameState = game,
