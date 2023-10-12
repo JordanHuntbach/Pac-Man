@@ -8,6 +8,7 @@ import com.jordan.pacman.game.ghosts.Pinky
 import com.jordan.pacman.game.tiles.Pill
 import com.jordan.pacman.game.tiles.PowerPill
 import com.jordan.pacman.game.tiles.Tile
+import com.jordan.pacman.targeting
 import com.jordan.pacman.ui.GameOverScene
 import com.jordan.pacman.ui.GameScene
 import javafx.stage.Stage
@@ -99,15 +100,6 @@ data class Game(
     }
 
     fun scatterMode() = ghostMode % 2 == 0
-
-    private suspend fun targeting(millisPerFrame: Int, block: suspend () -> Unit) {
-        val start = Instant.now()
-        block()
-        val time = start.until(Instant.now(), MILLIS)
-        if (time < millisPerFrame) {
-            delay(millisPerFrame - time)
-        }
-    }
 
     private fun gameLoop() {
         if (!pacmanIsPaused()) {
