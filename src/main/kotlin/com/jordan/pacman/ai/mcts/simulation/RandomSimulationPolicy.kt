@@ -16,7 +16,7 @@ class RandomSimulationPolicy : SimulationPolicy {
         for (i in 0 until 100) {
             val validMoves = game.pacman.validMoves(game.maze)
             game.playSingleFrame(validMoves.random())
-            if (game.lives < lives) break
+            if (game.lives < lives) return 1
         }
 
         return game.score
