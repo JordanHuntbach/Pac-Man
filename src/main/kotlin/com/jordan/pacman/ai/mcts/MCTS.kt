@@ -51,7 +51,7 @@ class MCTS(
 
     fun selectBestMoves(): List<Direction?>? {
         val children = rootNode.children ?: return null
-        return evaluationPolicy.selectBestNode(children)?.instructionsToReachNode
+        return evaluationPolicy.selectBestNode(children.filter { !it.isTerminal })?.instructionsToReachNode
     }
 
     private fun selection(parent: Node): Node? {
