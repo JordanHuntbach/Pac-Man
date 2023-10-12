@@ -49,9 +49,10 @@ class MCTS(
         logger.debug { "Finished running $rounds rounds of MCTS" }
     }
 
-    fun selectBestMoves(): List<Direction?>? {
-        val children = rootNode.children ?: return null
-        return evaluationPolicy.selectBestNode(children.filter { !it.isTerminal })?.instructionsToReachNode
+    fun selectBestMoves(): List<Direction?> {
+        return rootNode.children?.let { children ->
+            evaluationPolicy.selectBestNode(children.filter { !it.isTerminal })?.instructionsToReachNode
+        } ?: listOf(null)
     }
 
     private fun selection(parent: Node): Node? {

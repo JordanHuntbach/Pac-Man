@@ -18,6 +18,7 @@ class MCTSAgent(
     fun playGame(game: Game) {
         launch(coroutineContext) {
             game.initialise()
+            game.preGame = false
 
             val selectionPolicy = UCTSelectionPolicy()
             val expansionPolicy = JunctionBasedExpansionPolicy()
@@ -27,7 +28,7 @@ class MCTSAgent(
             while (game.lives > 0) {
                 val mcts = MCTS(game, selectionPolicy, expansionPolicy, simulationPolicy, evaluationPolicy)
                 mcts.run(60)
-                mcts.selectBestMoves()?.forEach { direction ->
+                mcts.selectBestMoves().forEach { direction ->
                     targeting(millisPerFrame = 12) {
                         game.playSingleFrame(direction)
                         game.render()

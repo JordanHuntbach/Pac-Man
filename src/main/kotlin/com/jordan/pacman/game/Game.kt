@@ -62,7 +62,7 @@ data class Game(
 
     private var pacmanPausedFrames: Int = 0,
     private var ghostsPausedFrames: Int = 0,
-    private var ghostsJustEaten: MutableSet<String> = mutableSetOf(),
+    var ghostsJustEaten: MutableSet<String> = mutableSetOf(),
 ) : CoroutineScope {
 
     val ghosts: List<Ghost> = listOf(blinky, pinky, inky, clyde)
@@ -130,8 +130,6 @@ data class Game(
             }
         }
 
-        handleGhostCollisions()
-
         handleGhostMode()
 
         handleCruiseElroy()
@@ -139,6 +137,8 @@ data class Game(
         handleFruit()
 
         handleBonusPoints()
+
+        handleGhostCollisions()
     }
 
     private fun pacmanIsPaused(): Boolean {

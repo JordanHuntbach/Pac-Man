@@ -1,6 +1,7 @@
 package com.jordan.pacman.ui
 
 import com.jordan.pacman.Globals
+import com.jordan.pacman.ai.mcts.MCTSAgent
 import com.jordan.pacman.game.Game
 import javafx.application.Platform
 import javafx.geometry.Insets
@@ -14,6 +15,7 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import javafx.stage.Stage
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.withContext
 import mu.KLogging
 
 class MenuScene(
@@ -34,7 +36,10 @@ class MenuScene(
 
             Button().apply {
                 setOnAction {
-                    Game(stage, newSingleThreadContext("Game Thread")).playGameToCompletion()
+                    val context = newSingleThreadContext("Game Thread")
+                    val game = Game(stage, context)
+                    MCTSAgent(context).playGame(game)
+//                    Game(stage, newSingleThreadContext("Game Thread")).playGameToCompletion()
                 }
                 setButtonTextAlternatingCaseOnHover("start game")
             },
