@@ -5,6 +5,9 @@ import com.jordan.pacman.game.Direction
 import com.jordan.pacman.game.Game
 import com.jordan.pacman.game.Levels
 import com.jordan.pacman.game.PacMan
+import com.jordan.pacman.game.tiles.Pill
+import com.jordan.pacman.game.tiles.PowerPill
+import com.jordan.pacman.game.tiles.Tile
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
@@ -67,13 +70,20 @@ class GameScene(
         stylesheets.add("game.css")
     }
 
+    private fun shouldDrawTile(tile: Tile, game: Game): Boolean {
+        if (tile is Pill || tile is PowerPill) {
+            return !game.maze.hashesOfDotsEaten.contains(tile.hashCode())
+        }
+        return true
+    }
+
     suspend fun render(game: Game) = withContext(Dispatchers.JavaFx) {
         graphicsContext.fill = Color.BLACK
         graphicsContext.fillRect(0.0, 0.0, canvas.width, canvas.height)
 
         for (row in game.maze.tiles) {
             for (tile in row) {
-                if (tile.image != null && tile.isActive) {
+                if (tile.image != null && shouldDrawTile(tile, game)) {
                     graphicsContext.drawImage(tile.image, tile.position.x, tile.position.y)
                 }
             }

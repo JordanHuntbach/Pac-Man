@@ -7,24 +7,27 @@ import com.jordan.pacman.game.tiles.PowerPill
 import com.jordan.pacman.game.tiles.Tile
 
 /**
- * Note that tiles are 8 x 8 pixels, so the 'centre' is considered as (3,4).
+ * Note that tiles are 8 x 8 pixels, so the 'centre' of a tile is considered as (3,4).
  */
 class Maze(
     val tiles: Array<Array<Tile>> = standardMaze,
-    var dotsEaten: Int = 0,
+    private val numberOfDots: Int = standardMaze.sumOf { row -> row.count { it is Pill || it is PowerPill } },
+    val hashesOfDotsEaten: MutableSet<Int> = mutableSetOf(),
 ) {
 
-    private val pills = tiles.flatten().filter { it is Pill || it is PowerPill }
-    private val numberOfDots = pills.size
-
     fun reset() {
-        pills.forEach { it.isActive = true }
-        dotsEaten = 0
+        hashesOfDotsEaten.clear()
     }
 
-    fun allDotsEaten() = dotsEaten == numberOfDots
+    fun dotsEaten() = hashesOfDotsEaten.size
 
-    fun remainingDots() = numberOfDots - dotsEaten
+    fun allDotsEaten() = hashesOfDotsEaten.size == numberOfDots
+
+    fun remainingDots() = numberOfDots - hashesOfDotsEaten.size
+
+    fun eatDot(tile: Tile): Boolean {
+        return hashesOfDotsEaten.add(tile.hashCode())
+    }
 
     fun stillWithinSameTile(position: Position, direction: Direction, distance: Double): Boolean {
         val xWithinTile = position.x.toInt() % TILE_SIZE
@@ -127,9 +130,6 @@ class Maze(
     }
 
     fun copy(): Maze {
-        return Maze(
-            tiles = tiles.map { row -> row.map { it.copy() }.toTypedArray() }.toTypedArray(),
-            dotsEaten = dotsEaten
-        )
+        return Maze(tiles, numberOfDots, hashesOfDotsEaten.toMutableSet())
     }
 }

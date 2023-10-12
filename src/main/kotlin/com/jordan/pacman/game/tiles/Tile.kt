@@ -7,7 +7,4 @@ interface Tile {
     val position: Position
     val image: Image?
     val navigable: Boolean
-    var isActive: Boolean
-
-    fun copy(): Tile
 }
